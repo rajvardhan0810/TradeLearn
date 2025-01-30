@@ -23,7 +23,6 @@ router.post('/', async (req, res) => {
     if (!registrationData) {
         return res.status(400).send("Registration data missing.");
     }
-
     
 let { name, username, skill, password, github, linkedin } = registrationData;
 

@@ -7,6 +7,7 @@ const cookieparser = require("cookie-parser");
 const path = require('path');
 const otpStorage = require('./storage');
 const jwt=require("jsonwebtoken");
+const multer = require("multer");
 
 require('dotenv').config();
 
@@ -38,7 +39,46 @@ app.use(session({
     cookie: { secure: false } 
 }));
 
-
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "public/uploads/");
+    },
+    filename: function (req, file, cb) {
+      cb(null, Date.now() + path.extname(file.originalname));
+    },
+  });
+  
+  const fileFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image files are allowed!"), false);
+    }
+  };
+  
+  const upload = multer({ storage: storage, fileFilter: fileFilter });
+  
+  app.post(
+    "/update-profile-pic",
+    isLoggedIn,
+    upload.single("profilePic"),
+    async (req, res) => {
+      try {
+        const user = await loginModel.findOneAndUpdate(
+          { username: req.user.username },
+          { profilePic: req.file.filename },
+          { new: true }
+        );
+  
+        res.redirect("/dashboard");
+      } catch (err) {
+        console.error(err);
+        res
+          .status(500)
+          .send("An error occurred while updating the profile picture.");
+      }
+    }
+  );
 
 
 
@@ -73,8 +113,6 @@ app.post("/footer", isLoggedIn, async (req, res) => {
     res.render("footer", { result: result });
 });
 
-  
-
 app.get("/message",isLoggedIn,(req,res)=>{
     res.render("message")
 })
@@ -84,8 +122,7 @@ app.get("/PersonalMessages",isLoggedIn,async (req,res)=>{
     let data=await messageModel.find({from:user})
    
     res.render('PersonalMessages',{data:data})
-})
-
+});
 
 
 app.use('/login',login)
@@ -115,11 +152,8 @@ app.get("/loginOTP",(req,res)=>{
            
             res.render("loginOTP",{email:req.query.email,name:req.query.name});
         }
-    });
-   
-    
+    });    
 })
-
 
 
 app.get("/aboutus",(req,res)=>{
@@ -285,8 +319,6 @@ function isLoggedIn(req,res,next){
         } catch (error) {
             return res.status(401).send("Invalid or expired token");
         }
-    
-    
 }
 
 app.use((req, res) => {
