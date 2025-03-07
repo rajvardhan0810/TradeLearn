@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 require('dotenv').config(); // Load environment variables from .env file
 
 // Connect to MongoDB using the URI from the environment variable
-mongoose.connect("mongodb+srv://rajvardhantiwari008:Raj08102004@cluster0.w2wtw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
+mongoose.connect("mongodb://localhost:27017", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   
