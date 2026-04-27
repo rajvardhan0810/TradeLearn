@@ -17,6 +17,7 @@ const loginSchema = mongoose.Schema({
   email: { type: String },
   github: { type: String },
   linkedin: { type: String },
+  profilePic: { type: String, default: "dummyUser.jpg" },
   password: { type: String },
 }, {
   timestamps: true // Adds createdAt and updatedAt fields

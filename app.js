@@ -5,6 +5,7 @@ const loginModel = require("./models/login")
 const messageModel = require("./models/message")
 const cookieparser = require("cookie-parser");
 const path = require('path');
+const fs = require("fs");
 const otpStorage = require('./storage');
 const jwt=require("jsonwebtoken");
 const multer = require("multer");
@@ -56,7 +57,36 @@ const storage = multer.diskStorage({
     }
   };
   
-  const upload = multer({ storage: storage, fileFilter: fileFilter });
+const upload = multer({ storage: storage, fileFilter: fileFilter });
+const defaultProfilePic = "dummyUser.jpg";
+
+function removeUploadedFile(filename) {
+    if (!filename || filename === defaultProfilePic) {
+        return;
+    }
+
+    const filePath = path.join(__dirname, "public", "uploads", filename);
+    if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+    }
+}
+
+async function getUnreadConversationCount(username) {
+    const chats = await messageModel.find({ from: username }).select("content");
+    const ownPrefix = `${username}:`;
+
+    return chats.reduce((count, chat) => {
+        const lastMessage = chat.content && chat.content.length > 0
+            ? chat.content[chat.content.length - 1]
+            : "";
+
+        if (lastMessage && !lastMessage.startsWith(ownPrefix)) {
+            return count + 1;
+        }
+
+        return count;
+    }, 0);
+}
   
   app.post(
     "/update-profile-pic",
@@ -64,11 +94,22 @@ const storage = multer.diskStorage({
     upload.single("profilePic"),
     async (req, res) => {
       try {
-        const user = await loginModel.findOneAndUpdate(
-          { username: req.user.username },
-          { profilePic: req.file.filename },
-          { new: true }
+        if (!req.file) {
+            return res.redirect("/dashboard");
+        }
+
+        const existingUser = await loginModel.findOne({ username: req.user.username });
+        if (!existingUser) {
+            return res.status(404).send("User not found");
+        }
+
+        await loginModel.findOneAndUpdate(
+            { username: req.user.username },
+            { $set: { profilePic: req.file.filename } },
+            { new: true }
         );
+
+        removeUploadedFile(existingUser.profilePic);
   
         res.redirect("/dashboard");
       } catch (err) {
@@ -79,6 +120,28 @@ const storage = multer.diskStorage({
       }
     }
   );
+
+app.post("/remove-profile-pic", isLoggedIn, async (req, res) => {
+    try {
+        const user = await loginModel.findOne({ username: req.user.username });
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        removeUploadedFile(user.profilePic);
+
+        await loginModel.findOneAndUpdate(
+            { username: req.user.username },
+            { $set: { profilePic: defaultProfilePic } },
+            { new: true }
+        );
+
+        res.redirect("/dashboard");
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Could not remove profile picture.");
+    }
+});
 
 
 
@@ -95,22 +158,23 @@ app.get("/Register",(req,res)=>{
 })
 
 app.get("/footer",isLoggedIn,async (req,res)=>{
-    let users=await loginModel.find({username:{$ne:req.user.username}})
-    console.log(users)
-    res.render("footer",{result:users})
+    res.render("footer", { result: [], hasSearched: false, searchTerm: "" });
 })
 
 app.post("/footer", isLoggedIn, async (req, res) => {
-    let { search } = req.body;
+    let search = (req.body.search || "").trim();
     let currentUsername = req.user.username;  
 
-   
+    if (!search) {
+        return res.render("footer", { result: [], hasSearched: false, searchTerm: "" });
+    }
+
     let result = await loginModel.find({
         skill: { $regex: search, $options: "i" },
         username: { $ne: currentUsername }  
     });
 
-    res.render("footer", { result: result });
+    res.render("footer", { result: result, hasSearched: true, searchTerm: search });
 });
 
 app.get("/message",isLoggedIn,(req,res)=>{
@@ -119,9 +183,10 @@ app.get("/message",isLoggedIn,(req,res)=>{
 
 app.get("/PersonalMessages",isLoggedIn,async (req,res)=>{
     let user=req.user.username
-    let data=await messageModel.find({from:user})
+    let data=await messageModel.find({from:user}).sort({lastUpdated:-1})
+    const unreadCount = await getUnreadConversationCount(user);
    
-    res.render('PersonalMessages',{data:data})
+    res.render('PersonalMessages',{data:data, currentUser: user, unreadCount: unreadCount})
 });
 
 
@@ -173,15 +238,19 @@ app.get("/text/:username", isLoggedIn, async (req, res) => {
     let userMessages = await messageModel.findOne({ from: req.user.username, to: req.params.username });
     let user = (userMessages ? userMessages.content : []);
     
-    res.render("text", { username: req.params.username, usermessage: user });
+    res.render("text", { username: req.params.username, usermessage: user, currentUser: req.user.username });
 });
 
 
 app.post("/text/:username", isLoggedIn, async (req, res) => {
     let from = req.user.username;
     let to = req.params.username;
+    let cleanText = (req.body.text || "").trim();
+    if (!cleanText) {
+        return res.redirect(`/text/${to}`);
+    }
     
-    let messagesobject = `${from}: ${req.body.text}`;
+    let messagesobject = `${from}: ${cleanText}`;
     
 
     
@@ -197,7 +266,7 @@ app.post("/text/:username", isLoggedIn, async (req, res) => {
    
     let m2 = await messageModel.findOneAndUpdate(
         { from: to, to: from },
-        { $push: { content: messagesobject }, $set: { timestamp: Date.now() } },
+        { $push: { content: messagesobject }, $set: { lastUpdated: Date.now() } },
         { new: true, upsert: true }
     );
 
@@ -210,7 +279,8 @@ app.post("/text/:username", isLoggedIn, async (req, res) => {
 app.get('/home',isLoggedIn,async (req,res)=>{
   
     let user = await loginModel.findOne({username:req.user.username})
-    res.render('HomePage',{name:user.name})
+    const unreadCount = await getUnreadConversationCount(req.user.username);
+    res.render('HomePage',{name:user.name, unreadCount: unreadCount})
 })
 
 app.get('/delete/:username',isLoggedIn,async (req,res)=>{
@@ -295,7 +365,7 @@ app.post("/loginVerify",(req,res)=>{
 
         console.log(req.query.name)
 
-        res.render('HomePage',{name:req.query.name});
+        res.render('HomePage',{name:req.query.name, unreadCount: 0});
 
 
  })

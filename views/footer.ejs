@@ -40,7 +40,8 @@
                 class="w-full max-w-lg px-4 py-2 bg-zinc-700 text-white rounded-lg outline-none focus:ring-2 focus:ring-blue-500 animate-fadeIn" 
                 type="text" 
                 placeholder="Search for skills..."
-                name="search">
+                name="search"
+                value="<%= searchTerm || '' %>">
             
             <button 
                 id="search-button" 
@@ -51,11 +52,12 @@
         </form>
     </div>
 
-   <% if(result.length > 0) { %>
+   <% if (hasSearched) { %>
     <main class="flex flex-col items-center justify-center mt-5 text-center">
         
         <section id="search-section" class="w-full max-w-3xl mx-auto">
             <h2 class="text-2xl font-bold mb-4">Search Results</h2>
+            <% if (result.length > 0) { %>
             <% result.forEach(ele => { %>
             <div class="search-result">
                 <h3 class="text-xl font-semibold"><%= ele.name %></h3>
@@ -66,6 +68,9 @@
                 <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"><a href="/text/<%= ele.username %>">Message</a></button>
             </div>
             <% }) %>
+            <% } else { %>
+            <p class="text-zinc-300">No users found for this skill.</p>
+            <% } %>
 
         </section>
        

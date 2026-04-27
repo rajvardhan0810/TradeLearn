@@ -5,56 +5,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TradeLearn Platform - Messages</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .message-box {
-            background-color: #2d3748;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s ease;
-        }
-
-        .message-box:hover {
-            background-color: #4a5568;
-        }
-
-        .username {
-            font-weight: bold;
-            color: #63b3ed;
-            word-wrap: break-word;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+<body class="min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-800 text-white p-4 sm:p-8">
+    <% const activeUser = currentUser || ""; %>
+    <% const totalUnread = typeof unreadCount === "number" ? unreadCount : 0; %>
+    <header class="max-w-4xl mx-auto flex items-center justify-between mb-8">
+        <a href="/home" class="inline-flex items-center gap-2 bg-zinc-700 hover:bg-zinc-600 px-4 py-2 rounded-lg">
+            <i class="fa-solid fa-arrow-left"></i>
+            Home
+        </a>
+        <h1 class="text-xl sm:text-3xl font-bold tracking-wide inline-flex items-center gap-2">
+            Your Conversations
+            <% if (totalUnread > 0) { %>
+                <span class="inline-flex items-center justify-center min-w-6 h-6 px-2 rounded-full bg-rose-500 text-xs font-semibold">
+                    <%= totalUnread > 99 ? "99+" : totalUnread %>
+                </span>
+            <% } %>
+        </h1>
+        <a href="/footer" class="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 px-4 py-2 rounded-lg">
+            <i class="fa-solid fa-user-plus"></i>
+            New Chat
+        </a>
+    </header>
 
-<body class="bg-zinc-900 text-white p-8">
-
-    <div class="absolute top-4 left-4">
-        <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-            <a href="javascript:history.back()">Back</a>
-        </button>
-    </div> 
-
-    
-    
-    <section class="mt-12 ">
-        <h2 class="text-3xl font-semibold mb-8 text-center">Your Messages</h2>
-
-        <% if(data.length>0) {%>
-        <% data.forEach(item=>{%>
-        <div class="message-box flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <h1 class="message-sender text-xl sm:text-2xl mb-4 sm:mb-0 break-words">UserID: <span class="username"><%= item.to %></span></h1>
-            <div class="message-actions flex gap-4 mt-2 sm:mt-0">
-                <button class="btn btn-show bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-                    <a href="text/<%= item.to %>">Show Conversation</a>
-                </button>
-                <button class="btn btn-delete bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
-                    <a href="delete/<%= item.to %>">Delete</a>
-                </button>
+    <main class="max-w-4xl mx-auto">
+        <% if (data.length === 0) { %>
+            <div class="rounded-2xl border border-zinc-700 bg-zinc-900/70 p-8 text-center">
+                <i class="fa-regular fa-comment-dots text-5xl text-cyan-400"></i>
+                <p class="mt-4 text-zinc-300">No chats yet. Start a conversation from search.</p>
             </div>
-        </div>
-         <% })%>
         <% } %>
-    </section>
+
+        <div class="space-y-4">
+            <% data.forEach(item => { %>
+                <% 
+                    const lastMessage = item.content && item.content.length > 0 ? item.content[item.content.length - 1] : "";
+                    const hasUnread = lastMessage && activeUser && !lastMessage.startsWith(activeUser + ":");
+                %>
+                <article class="rounded-2xl border border-zinc-700 bg-zinc-900/70 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <img src="/images/dummyUser.jpg" alt="User Avatar" class="w-12 h-12 rounded-full object-cover border border-zinc-600" />
+                        <div>
+                            <p class="text-sm text-zinc-400 inline-flex items-center gap-2">
+                                Chat with
+                                <% if (hasUnread) { %>
+                                    <span class="inline-block w-2.5 h-2.5 rounded-full bg-rose-500" title="New message"></span>
+                                <% } %>
+                            </p>
+                            <h2 class="text-lg font-semibold text-cyan-300 break-all"><%= item.to %></h2>
+                            <p class="text-xs text-zinc-500 mt-1">
+                                Last active: <%= item.lastUpdated ? item.lastUpdated.toLocaleString() : "Recently" %>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <a href="/text/<%= item.to %>" class="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 px-4 py-2 rounded-lg font-medium">
+                            <i class="fa-regular fa-paper-plane"></i>
+                            Open
+                        </a>
+                        <a href="/delete/<%= item.to %>" class="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-500 px-4 py-2 rounded-lg font-medium">
+                            <i class="fa-solid fa-trash"></i>
+                            Delete
+                        </a>
+                    </div>
+                </article>
+            <% }) %>
+        </div>
+    </main>
 </body>
 </html>

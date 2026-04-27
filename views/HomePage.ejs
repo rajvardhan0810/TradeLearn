@@ -112,6 +112,7 @@
 </head>
 
 <body class="bg-gradient-to-r from-zinc-900 to-zinc-800 text-white">
+    <% const messageNotifications = typeof unreadCount === "number" ? unreadCount : 0; %>
 
     <!-- Navbar -->
     <nav class="flex items-center justify-between p-6 bg-zinc-800 shadow-md relative">
@@ -128,7 +129,14 @@
             </div>
             <a href="/aboutus" class="text-xl hover:text-blue-500 hover-bounce font-mono">About Us</a>
             <a href="/dashboard" class="text-xl hover:text-blue-500 hover-bounce font-mono">Profile</a>
-            <a href="/PersonalMessages"><i class="fa-solid fa-message cursor-pointer"></i></a>
+            <a href="/PersonalMessages" class="relative inline-flex items-center justify-center w-9 h-9 rounded-full hover:bg-zinc-700 transition" title="Messages">
+                <i class="fa-solid fa-message cursor-pointer"></i>
+                <% if (messageNotifications > 0) { %>
+                    <span class="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-full bg-rose-500 text-[11px] leading-5 text-white text-center font-semibold">
+                        <%= messageNotifications > 99 ? "99+" : messageNotifications %>
+                    </span>
+                <% } %>
+            </a>
             <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded shadow-lg transition duration-300">
                 <a href="/logout">Logout</a>
             </button>

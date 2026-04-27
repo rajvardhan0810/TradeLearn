@@ -7,106 +7,120 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
-<body class="bg-gray-200 h-screen flex items-center justify-center">
+<body class="min-h-screen bg-gradient-to-br from-zinc-900 via-zinc-800 to-slate-900 text-white flex items-center justify-center p-4">
+    <% const profileImageSrc = result.profilePic && result.profilePic !== "dummyUser.jpg" ? "/uploads/" + result.profilePic : "/images/dummyUser.jpg"; %>
+
     <div class="absolute top-4 left-4">
-        <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
-            <a href="/home">home</a>
-        </button>
+        <a href="/home" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded-lg transition">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
     </div>
-    <div class="absolute top-5 right-5">
-        <a
-          class="bg-red-500 px-6 py-2 text-sm text-white inline-block rounded-md"
-          href="/"
-          >Logout</a>
+
+    <div class="absolute top-4 right-4">
+        <a href="/logout" class="inline-flex items-center gap-2 bg-rose-500 hover:bg-rose-600 text-white font-semibold py-2 px-4 rounded-lg transition">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
     </div>
-    
-    <div class="bg-white p-8 rounded-lg shadow-md max-w-sm w-full text-center">
-        <div class="bg-white p-8 rounded-lg shadow-md max-w-sm w-full text-center">
-            <div class="mt-5">
-              <form
-                action="/update-profile-pic"
-                method="POST"
-                enctype="multipart/form-data"
-                class="flex flex-col items-center justify-center"
-              >
-                <!-- Preview the uploaded image -->
+
+    <main class="w-full max-w-md rounded-2xl bg-zinc-900/80 backdrop-blur-md border border-zinc-700 p-8 shadow-2xl">
+        <section class="flex flex-col items-center">
+            <div class="relative">
                 <img
-                  id="uploadedImagePreview"
-                  src="/uploads/<%= result.profilePic %>"
-                  class="w-24 h-24 rounded-full border-2 border-blue-500 mb-3"
+                    id="uploadedImagePreview"
+                    src="<%= profileImageSrc %>"
+                    alt="Profile Picture"
+                    class="w-28 h-28 rounded-full border-4 border-cyan-400 object-cover shadow-lg"
                 />
-            
-                <!-- Upload icon for choosing a new image -->
-                <label
-                  for="profilePic"
-                  class="absolute mt-20 ml-12 bg-zinc-700 text-white w-8 h-8 text-sm rounded-full cursor-pointer flex items-center justify-center hover:bg-zinc-800 transform -translate-x-2 -translate-y-2"
-                >
-                  <i class="fas fa-upload"></i>
-                </label>
-                <input
-                  type="file"
-                  name="profilePic"
-                  id="profilePic"
-                  accept="image/*"
-                  class="hidden"
-                  onchange="previewImage(event)"
-                />
-            
-                <!-- Submit button -->
-               
-              </form>
+
+                <form action="/update-profile-pic" method="POST" enctype="multipart/form-data" id="profileUploadForm">
+                    <label
+                        for="profilePic"
+                        class="absolute -bottom-1 -left-1 bg-cyan-500 text-white w-10 h-10 rounded-full cursor-pointer flex items-center justify-center hover:bg-cyan-600 border-2 border-zinc-900"
+                        title="Upload profile picture"
+                    >
+                        <i class="fas fa-camera"></i>
+                    </label>
+                    <input
+                        type="file"
+                        name="profilePic"
+                        id="profilePic"
+                        accept="image/*"
+                        class="hidden"
+                    />
+                </form>
+
+                <form action="/remove-profile-pic" method="POST">
+                    <button
+                        type="submit"
+                        class="absolute -top-1 -right-1 bg-rose-500 text-white w-10 h-10 rounded-full cursor-pointer flex items-center justify-center hover:bg-rose-600 border-2 border-zinc-900"
+                        title="Remove profile picture"
+                    >
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </form>
             </div>
-            
-            <script>
-              // Function to preview the uploaded image
-              function previewImage(event) {
-                const file = event.target.files[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = function (e) {
-                    document.getElementById('uploadedImagePreview').src = e.target.result;
-                  };
-                  reader.readAsDataURL(file);
-                }
-              }
-            </script>
-        <div class="flex flex-col items-center">
-           
-                
-            <h2 class="text-2xl font-bold mb-2 font-mono"><%= result.name %></h2>
-            <p class="text-gray-600 mb-4 font-mono"><%= result.email %></p>
-            <div class="mb-4">
-                <% if (result.github) { %>
-                    <a href="<%= result.linkedin %>" class="text-blue-500 hover:underline flex items-center" target="_blank">
-                        <i class="fa-brands fa-linkedin mr-2"></i>linkedin Profile
+
+            <h2 class="text-2xl font-bold mt-5"><%= result.name %></h2>
+            <p class="text-zinc-300 mb-5"><%= result.email %></p>
+        </section>
+
+        <section class="space-y-3">
+            <div class="rounded-xl bg-zinc-800 p-3">
+                <p class="text-xs uppercase tracking-wide text-zinc-400">Skill</p>
+                <p class="font-semibold text-cyan-300 mt-1"><%= result.skill %></p>
+            </div>
+
+            <div class="rounded-xl bg-zinc-800 p-3">
+                <p class="text-xs uppercase tracking-wide text-zinc-400 mb-2">Social Links</p>
+                <% if (result.linkedin) { %>
+                    <a href="<%= result.linkedin %>" class="text-blue-400 hover:underline block" target="_blank">
+                        <i class="fa-brands fa-linkedin mr-2"></i>LinkedIn Profile
                     </a>
                 <% } else { %>
-                    <p class="text-gray-400">No linkedin Profile available</p>
+                    <p class="text-zinc-500">No LinkedIn profile added</p>
                 <% } %>
-            </div>
-            <div class="mb-6">
+
                 <% if (result.github) { %>
-                    <a href="<%= result.github %>" class="text-blue-500 hover:underline flex items-center" target="_blank">
+                    <a href="<%= result.github %>" class="text-blue-400 hover:underline block mt-2" target="_blank">
                         <i class="fa-brands fa-github mr-2"></i>GitHub Profile
                     </a>
                 <% } else { %>
-                    <p class="text-gray-400">No GitHub Profile available</p>
+                    <p class="text-zinc-500 mt-2">No GitHub profile added</p>
                 <% } %>
-        </div>
-        <div class="text-left mb-6">
-            <h3 class="text-xl font-semibold mb-2 text-center font-mono">Skill</h3>
-            <ul class="space-y-2">
-                <li class="bg-gray-100 text-gray-700 font-bold py-2 rounded-md text-center"><%= result.skill %></li>
-            </ul>
-        </div>
-        <div class="">
-            <button class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-red-500">
-                <a  href="/updateuser">Update Account</a>
-            </button>
-            <button class="bg-red-600 mt-3 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-red-500">
-                <a  href="/userdelete">Delete Account</a>
-            </button>
-        </div>
-    </div>
+            </div>
+        </section>
+
+        <section class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <a href="/updateuser" class="text-center bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-4 rounded-lg transition">
+                Update Account
+            </a>
+            <a href="/userdelete" class="text-center bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 px-4 rounded-lg transition">
+                Delete Account
+            </a>
+        </section>
+    </main>
+
+    <script>
+        const profilePicInput = document.getElementById("profilePic");
+        const preview = document.getElementById("uploadedImagePreview");
+        const uploadForm = document.getElementById("profileUploadForm");
+
+        profilePicInput.addEventListener("change", (event) => {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+
+            uploadForm.submit();
+        });
+    </script>
 </body>
 </html>
