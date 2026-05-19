@@ -1,0 +1,19 @@
+0000000000000000000000000000000000000000 192059d8946bc36fef4423495aa5dc4fe96f133a ushabh-jain <ushabhjain07@gmail.com> 1732621106 +0530	clone: from https://github.com/Yogesh-ok55/Skill-Barter-Platform.git
+192059d8946bc36fef4423495aa5dc4fe96f133a 5c9bb02a680ec26e0782bd9188870d05c983860c raj-vardhan008 <rajvardhantawari008@gmail.com> 1738223785 +0530	commit: first commmit
+5c9bb02a680ec26e0782bd9188870d05c983860c 5c9bb02a680ec26e0782bd9188870d05c983860c raj-vardhan008 <rajvardhantawari008@gmail.com> 1738223849 +0530	Branch: renamed refs/heads/main to refs/heads/main
+5c9bb02a680ec26e0782bd9188870d05c983860c 38baa0ce4ec4599f7ac0f9f263e4f9925044c787 raj-vardhan008 <rajvardhantawari008@gmail.com> 1741328215 +0530	commit: done
+38baa0ce4ec4599f7ac0f9f263e4f9925044c787 b0eae8ad669c397f67780bc522194dae1af16cce raj-vardhan008 <rajvardhantawari008@gmail.com> 1756487779 +0530	commit: first commit
+b0eae8ad669c397f67780bc522194dae1af16cce b0eae8ad669c397f67780bc522194dae1af16cce raj-vardhan008 <rajvardhantawari008@gmail.com> 1756487779 +0530	Branch: renamed refs/heads/main to refs/heads/main
+b0eae8ad669c397f67780bc522194dae1af16cce b0eae8ad669c397f67780bc522194dae1af16cce raj-vardhan008 <rajvardhantawari008@gmail.com> 1756487875 +0530	Branch: renamed refs/heads/main to refs/heads/main
+b0eae8ad669c397f67780bc522194dae1af16cce ce35997778b8478e69e8e00c63136276a951566e raj-vardhan008 <rajvardhantawari008@gmail.com> 1777213767 +0530	commit: first commit
+ce35997778b8478e69e8e00c63136276a951566e b0eae8ad669c397f67780bc522194dae1af16cce raj-vardhan008 <rajvardhantawari008@gmail.com> 1777214036 +0530	reset: moving to b0eae8a
+b0eae8ad669c397f67780bc522194dae1af16cce b0eae8ad669c397f67780bc522194dae1af16cce raj-vardhan008 <rajvardhantawari008@gmail.com> 1777214114 +0530	Branch: renamed refs/heads/main to refs/heads/main
+b0eae8ad669c397f67780bc522194dae1af16cce b0eae8ad669c397f67780bc522194dae1af16cce raj-vardhan008 <rajvardhantawari008@gmail.com> 1777214156 +0530	Branch: renamed refs/heads/main to refs/heads/main
+b0eae8ad669c397f67780bc522194dae1af16cce 45e215cfdca19f4ee9a130bbf2a6e7cb2f29bd05 raj-vardhan008 <rajvardhantawari008@gmail.com> 1777214322 +0530	commit: first commit
+45e215cfdca19f4ee9a130bbf2a6e7cb2f29bd05 e20457cc78518bf12ff7b5c3d96f0bd451ee5c29 raj-vardhan008 <rajvardhantawari008@gmail.com> 1777282229 +0530	commit: update the code
+e20457cc78518bf12ff7b5c3d96f0bd451ee5c29 3c038566e60ca2cd950c6620d25f28ae6235d3a0 raj-vardhan008 <rajvardhantawari008@gmail.com> 1777282742 +0530	commit: add git ignore
+3c038566e60ca2cd950c6620d25f28ae6235d3a0 bc54220a50bb69fa722096065c4ef1ba4239619f raj-vardhan008 <rajvardhantawari008@gmail.com> 1777282861 +0530	commit: update git ignore
+bc54220a50bb69fa722096065c4ef1ba4239619f fcb611199aa4d089e0f44c9fce72e7a6847b2141 raj-vardhan008 <rajvardhantawari008@gmail.com> 1777284686 +0530	commit: changes done
+fcb611199aa4d089e0f44c9fce72e7a6847b2141 8f7f3f180ae1a72ebdd83b2e74f6c5acc19d8a92 raj-vardhan008 <rajvardhantawari008@gmail.com> 1779108434 +0530	commit: update the code
+8f7f3f180ae1a72ebdd83b2e74f6c5acc19d8a92 6f369aa78a28aa96f1909eb67c61c0f93316c6a9 raj-vardhan008 <rajvardhantawari008@gmail.com> 1779170040 +0530	commit: Add gitignore rules for env and local Mongo data
+6f369aa78a28aa96f1909eb67c61c0f93316c6a9 c7bc5c6854c5fc92725a839e06e7a43e8a26fdb9 raj-vardhan008 <rajvardhantawari008@gmail.com> 1779170083 +0530	pull --rebase origin main (finish): refs/heads/main onto 0e41b781c9e881c447b343852bf0ea180506bb70

@@ -1,0 +1,12 @@
+# dependencies
+node_modules/
+
+# local environment secrets
+.env
+
+# local MongoDB runtime data
+.mongo-local/
+
+# uploads (keep folder, ignore generated files)
+public/uploads/
+!public/uploads/.gitkeep
