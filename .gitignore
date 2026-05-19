@@ -1,10 +1,12 @@
-# node_modules
+# dependencies
+node_modules/
 
-node_modules
-
-# .env
-
+# local environment secrets
 .env
 
-# local mongo runtime data
+# local MongoDB runtime data
 .mongo-local/
+
+# uploads (keep folder, ignore generated files)
+public/uploads/
+!public/uploads/.gitkeep
